@@ -1,5 +1,6 @@
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
     mode: 'production',
@@ -7,11 +8,12 @@ module.exports = {
     target: 'node',
     devtool: 'inline-source-map',
     externalsPresets: { node: true },
+    externals: [nodeExternals()],
     output: {
         clean: true,
-        library: 'logger',
         filename: 'index.js',
         path: path.resolve(__dirname, 'dist'),
+        library: { name: 'logger', type: 'umd' },
     },
     module: {
         rules: [
