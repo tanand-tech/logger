@@ -4,11 +4,11 @@ const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
     mode: 'production',
-    entry: './src/index.ts',
     target: 'node',
     devtool: 'inline-source-map',
-    externalsPresets: { node: true },
+    entry: './src/index.ts',
     externals: [nodeExternals()],
+    externalsPresets: { node: true },
     output: {
         clean: true,
         filename: 'index.js',
@@ -18,7 +18,6 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
                 use: 'ts-loader',
                 exclude: /node_modules/,
             },
@@ -27,5 +26,9 @@ module.exports = {
     optimization: {
         minimize: true,
         minimizer: [new TerserPlugin()],
+    },
+    watchOptions: {
+        aggregateTimeout: 500,
+        poll: 1000,
     },
 };
