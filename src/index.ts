@@ -1,4 +1,3 @@
-import * as dotenv from 'dotenv';
 import { Logger, TLogLevelColor, TLogLevelName, ISettingsParam } from 'tslog';
 
 const logLevels: TLogLevelName[] = ['silly', 'trace', 'debug', 'info', 'warn', 'error', 'fatal'];
@@ -38,7 +37,6 @@ export function updateSettings(settings: ISettingsParam) {
 }
 
 export default function logger(name: string, ...args: string[]): Logger {
-    dotenv.config();
     const logLevel = process.env.LOGGER_MIN_LEVEL?.toLowerCase() as TLogLevelName | undefined;
     const minLevel: TLogLevelName = logLevel && logLevels.includes(logLevel) ? logLevel : 'info';
 
