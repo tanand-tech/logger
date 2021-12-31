@@ -30,21 +30,70 @@ let configs: ISettingsParam = {
     logLevelsColors,
 };
 
-export type { Logger, TLogLevelName as LogLevel };
+const getAllProperties = (object: any) => {
+    const properties = new Set();
 
-export function updateSettings(settings: ISettingsParam) {
-    configs = { ...configs, ...settings };
+    do {
+        for (const key of Reflect.ownKeys(object)) {
+            properties.add([object, key]);
+        }
+    } while ((object = Reflect.getPrototypeOf(object)) && object !== Object.prototype);
+
+    return properties;
+};
+
+function autoBind<SelfType extends Record<string, any>>(
+    self: SelfType,
+    {
+        include,
+        exclude,
+    }: { readonly include?: ReadonlyArray<string | RegExp>; readonly exclude?: ReadonlyArray<string | RegExp> } = {}
+) {
+    const filter = (key: string) => {
+        const match = (pattern: string | RegExp) => (typeof pattern === 'string' ? key === pattern : pattern.test(key));
+
+        if (include) {
+            return include.some(match); // eslint-disable-line unicorn/no-array-callback-reference
+        }
+
+        if (exclude) {
+            return !exclude.some(match); // eslint-disable-line unicorn/no-array-callback-reference
+        }
+
+        return true;
+    };
+
+    // @ts-ignore
+    for (const [object, key] of getAllProperties(self.constructor.prototype)) {
+        if (key === 'constructor' || !filter(key)) {
+            continue;
+        }
+
+        const descriptor = Reflect.getOwnPropertyDescriptor(object, key);
+        if (descriptor && typeof descriptor.value === 'function') {
+            // @ts-ignore
+            self[key] = self[key].bind(self);
+        }
+    }
+
+    return self;
 }
 
 export default function logger(name: string, ...args: string[]): Logger {
     const logLevel = process.env.LOGGER_MIN_LEVEL?.toLowerCase() as TLogLevelName | undefined;
     const minLevel: TLogLevelName = logLevel && logLevels.includes(logLevel) ? logLevel : 'info';
 
-    return new Logger({
-        name: `\x1b[0m\x1b[1m${name}\x1b[0m${args.reduce((n, s) => n + ' ' + s, '')}\x1b[90m`,
-        displayFilePath:
-            process.env.LOGGER_DISPLAY_FILE_PATH?.toLowerCase() === 'true' ? 'hideNodeModulesOnly' : 'hidden',
-        minLevel,
-        ...configs,
-    });
+    return autoBind(
+        new Logger({
+            name: `\x1b[0m\x1b[1m${name}\x1b[0m${args.reduce((n, s) => n + ' ' + s, '')}\x1b[90m`,
+            displayFilePath:
+                process.env.LOGGER_DISPLAY_FILE_PATH?.toLowerCase() === 'true' ? 'hideNodeModulesOnly' : 'hidden',
+            minLevel,
+            ...configs,
+        })
+    );
 }
+
+export type { Logger, TLogLevelName as LogLevel };
+
+module.exports = logger;
