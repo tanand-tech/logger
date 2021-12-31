@@ -1,4 +1,3 @@
-import dotenv from 'dotenv';
 import autoBind from './autobind';
 import { Logger, TLogLevelColor, TLogLevelName, ISettingsParam } from 'tslog';
 
@@ -35,15 +34,13 @@ let configs: ISettingsParam = {
 export type { Logger, TLogLevelName as LogLevel };
 
 export default function logger(name: string, ...args: string[]): Logger {
-    dotenv.config();
     const logLevel = process.env.LOGGER_MIN_LEVEL?.toLowerCase() as TLogLevelName | undefined;
     const minLevel: TLogLevelName = logLevel && logLevels.includes(logLevel) ? logLevel : 'info';
 
     return autoBind(
         new Logger({
             name: `\x1b[0m\x1b[1m${name}\x1b[0m${args.reduce((n, s) => n + ' ' + s, '')}\x1b[90m`,
-            displayFilePath:
-                process.env.LOGGER_DISPLAY_FILE_PATH?.toLowerCase() === 'true' ? 'hideNodeModulesOnly' : 'hidden',
+            displayFilePath: process.env.LOGGER_DISPLAY_FILE_PATH?.toLowerCase() === 'true' ? 'displayAll' : 'hidden',
             minLevel,
             ...configs,
         })
