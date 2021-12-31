@@ -9,6 +9,7 @@
         "sourceMap": true,
         "declaration": true,
         "removeComments": false,
+        "allowJs": true,
         "lib": ["es2020"],
 
         /* Strict Type-Checking Options */
@@ -29,7 +30,7 @@
             "@/*": ["src/*"],
             "~/*": ["src/types/*"]
         },
-        "typeRoots": ["../node_modules/@types"]
+        "typeRoots": ["node_modules/@types"]
     },
     /* Advanced Options */
     "skipLibCheck": true,

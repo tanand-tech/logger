@@ -1,3 +1,4 @@
+import autoBind from './auto-bind';
 import { Logger, TLogLevelColor, TLogLevelName, ISettingsParam } from 'tslog';
 
 const logLevels: TLogLevelName[] = ['silly', 'trace', 'debug', 'info', 'warn', 'error', 'fatal'];
@@ -29,55 +30,6 @@ let configs: ISettingsParam = {
     },
     logLevelsColors,
 };
-
-const getAllProperties = (object: any) => {
-    const properties = new Set();
-
-    do {
-        for (const key of Reflect.ownKeys(object)) {
-            properties.add([object, key]);
-        }
-    } while ((object = Reflect.getPrototypeOf(object)) && object !== Object.prototype);
-
-    return properties;
-};
-
-function autoBind<SelfType extends Record<string, any>>(
-    self: SelfType,
-    {
-        include,
-        exclude,
-    }: { readonly include?: ReadonlyArray<string | RegExp>; readonly exclude?: ReadonlyArray<string | RegExp> } = {}
-) {
-    const filter = (key: string) => {
-        const match = (pattern: string | RegExp) => (typeof pattern === 'string' ? key === pattern : pattern.test(key));
-
-        if (include) {
-            return include.some(match); // eslint-disable-line unicorn/no-array-callback-reference
-        }
-
-        if (exclude) {
-            return !exclude.some(match); // eslint-disable-line unicorn/no-array-callback-reference
-        }
-
-        return true;
-    };
-
-    // @ts-ignore
-    for (const [object, key] of getAllProperties(self.constructor.prototype)) {
-        if (key === 'constructor' || !filter(key)) {
-            continue;
-        }
-
-        const descriptor = Reflect.getOwnPropertyDescriptor(object, key);
-        if (descriptor && typeof descriptor.value === 'function') {
-            // @ts-ignore
-            self[key] = self[key].bind(self);
-        }
-    }
-
-    return self;
-}
 
 export default function logger(name: string, ...args: string[]): Logger {
     const logLevel = process.env.LOGGER_MIN_LEVEL?.toLowerCase() as TLogLevelName | undefined;
