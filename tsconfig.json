@@ -6,6 +6,7 @@
         "target": "es2020",
         "module": "commonjs",
         "outDir": "dist",
+        "allowJs": true,
         "sourceMap": true,
         "declaration": true,
         "removeComments": false,
