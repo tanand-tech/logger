@@ -9,7 +9,6 @@
         "sourceMap": true,
         "declaration": true,
         "removeComments": false,
-        "allowJs": true,
         "lib": ["es2020"],
 
         /* Strict Type-Checking Options */
@@ -26,10 +25,6 @@
         "resolveJsonModule": true,
         "moduleResolution": "node",
         "types": ["node"],
-        "paths": {
-            "@/*": ["src/*"],
-            "~/*": ["src/types/*"]
-        },
         "typeRoots": ["node_modules/@types"]
     },
     /* Advanced Options */
