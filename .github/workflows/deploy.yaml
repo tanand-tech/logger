@@ -16,7 +16,6 @@ jobs:
           registry-url: 'https://registry.npmjs.org/'
           scope: '@tanand-tech'
       - run: npm ci
-      - run: npm version ${{ github.event.release.tag_name }}
       - run: npm publish --public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
