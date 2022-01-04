@@ -1,22 +1,28 @@
 {
-    "name": "logger",
-    "version": "1.1.0",
-    "description": "",
-    "main": "index.js",
-    "types": "src/index.d.ts",
+    "name": "@tanand-tech/logger",
+    "version": "1.1.1",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "scripts": {
-        "build": "npx tsc",
-        "bundle": "npx webpack",
-        "postbundle": "npx copyfiles package.json dist"
+        "build": "npx webpack",
+        "prepublish": "npm run build"
     },
     "keywords": [],
-    "author": "",
+    "author": "tanand-tech",
+    "description": "tslog wrapper for tanand-tech internal usage",
     "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tanand-tech/logger.git"
+    },
+    "bugs": {
+        "url": "https://github.com/tanand-tech/logger/issues"
+    },
+    "homepage": "https://github.com/tanand-tech/logger#readme",
     "dependencies": {
         "tslog": "~3.2.2"
     },
     "devDependencies": {
-        "copyfiles": "^2.4.1",
         "eslint": "^8.5.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-prettier": "^4.0.0",

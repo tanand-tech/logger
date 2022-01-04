@@ -1,28 +1,21 @@
-name: Deploy
+name: Publish package to GitHub Packages
 on:
-  push:
-    branches:
-      - main
-
+  release:
+    types: [created]
 jobs:
   build:
     runs-on: ubuntu-20.04
-    name: Build and Push
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - name: git-checkout
-        uses: actions/checkout@v2
-
-      - name: Install all dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run bundle
-
-      - name: Push
-        uses: s0/git-publish-subdir-action@develop
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@tanand-tech'
+      - run: npm ci
+      - run: npm publish
         env:
-          REPO: self
-          BRANCH: release
-          FOLDER: dist
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MESSAGE: "Build: ({sha}) {msg}"
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
