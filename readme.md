@@ -10,7 +10,7 @@ tslog wrapper for tanand-tech internal usage
 ## Install
 
 ```sh
-npm install
+npm install @tanand-tech/logger
 ```
 
 ## Author
