@@ -7,11 +7,49 @@ tslog wrapper for tanand-tech internal usage
 
 ### [Homepage](https://github.com/tanand-tech/logger#readme)
 
-## Install
+## Usage
 
-```sh
+### Installation
+
+```shell
 npm install @tanand-tech/logger
 ```
+
+### Enable filepath
+
+```shell
+// Unix
+LOGGER_DISPLAY_FILE_PATH=true npm run start
+
+// Windows
+set LOGGER_DISPLAY_FILE_PATH=true npm run start
+
+// Cross-env
+cross-env LOGGER_DISPLAY_FILE_PATH=true npm run start
+```
+
+### Configure log levels
+
+```shell
+// Unix
+LOGGER_MIN_LEVEL=info npm run start
+
+// Windows
+set LOGGER_MIN_LEVEL=info npm run start
+
+// Cross-env
+cross-env LOGGER_MIN_LEVEL=info npm run start
+```
+
+###### Log Levels (In order of priority)
+
+1. Fatal
+2. Error
+3. Warn
+4. Info
+5. Debug
+6. Trace
+7. Silly
 
 ## Author
 
