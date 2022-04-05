@@ -41,6 +41,19 @@ set LOGGER_MIN_LEVEL=info npm run start
 cross-env LOGGER_MIN_LEVEL=info npm run start
 ```
 
+### Disable Log Colorization (defaults to true)
+
+```shell
+// Unix
+LOGGER_COLOR=false npm run start
+
+// Windows
+set LOGGER_COLOR=false npm run start
+
+// Cross-env
+cross-env LOGGER_COLOR=false npm run start
+```
+
 ###### Log Levels (In order of priority)
 
 1. Fatal
