@@ -34,13 +34,15 @@ let configs: ISettingsParam = {
 export type { Logger, TLogLevelName as LogLevel };
 
 export default function logger(name: string, ...args: string[]): Logger {
+    const colorizePrettyLogs = process.env.LOGGER_COLOR?.toLowerCase() !== 'false'
     const logLevel = process.env.LOGGER_MIN_LEVEL?.toLowerCase() as TLogLevelName | undefined;
     const minLevel: TLogLevelName = logLevel && logLevels.includes(logLevel) ? logLevel : 'info';
 
     return autoBind(
         new Logger({
-            name: `\x1b[0m\x1b[1m${name}\x1b[0m${args.reduce((n, s) => n + ' ' + s, '')}\x1b[90m`,
+            name: colorizePrettyLogs ? `\x1b[0m\x1b[1m${name}\x1b[0m${args.reduce((n, s) => n + ' ' + s, '')}\x1b[90m` : `${name}${args.reduce((n, s) => n + ' ' + s, '')}`,
             displayFilePath: process.env.LOGGER_DISPLAY_FILE_PATH?.toLowerCase() === 'true' ? 'displayAll' : 'hidden',
+            colorizePrettyLogs,
             minLevel,
             ...configs,
         })
