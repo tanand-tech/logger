@@ -51,7 +51,7 @@ export default function logger<T = undefined>(name = 'LOGGER', ...args: string[]
     return autoBind(
         new Logger({
             name: (args.reduce((n, s) => n + ' ' + s, `\x1b[0m[\x1b[1m${name}\x1b[0m`) + ']').padEnd(
-                +(process.env.LOGGER_MIN_PAD ?? 0),
+                +(process.env.LOGGER_MIN_PAD ?? 0) + 14,
                 ' '
             ),
             hideLogPositionForProduction: !['true', '1'].includes(
