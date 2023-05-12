@@ -3,7 +3,7 @@
     "display": "Node 16",
     "compilerOptions": {
         /* Basic Options */
-        "target": "es2020",
+        "target": "es6",
         "module": "commonjs",
         "outDir": "dist",
         "allowJs": true,

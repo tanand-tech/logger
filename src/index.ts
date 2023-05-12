@@ -36,7 +36,7 @@ enum LogLevel {
     fatal,
 }
 
-class Logger<T> extends TSLog<T> {
+class Logger<T = undefined> extends TSLog<T> {
     constructor(settings?: ISettingsParam<T>) {
         super(settings);
     }
@@ -47,7 +47,7 @@ class Logger<T> extends TSLog<T> {
     }
 }
 
-export default function logger(name = 'LOGGER', ...args: string[]): Logger<undefined> {
+export default function logger<T = undefined>(name = 'LOGGER', ...args: string[]): Logger<T> {
     return autoBind(
         new Logger({
             name: args.reduce((n, s) => n + ' ' + s, `\x1b[0m\x1b[1m${name}\x1b[0m`),
