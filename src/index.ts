@@ -23,7 +23,7 @@ const configs: ISettingsParam<undefined> = {
         fileName: ['yellow'],
     },
     prettyLogTimeZone: 'local',
-    prettyLogTemplate: '{{dateIsoStr}}\t{{logLevelName}}\t{{name}} {{filePathWithLine}}\t',
+    prettyLogTemplate: '{{dateIsoStr}}\t{{logLevelName}}\t{{name}} {{filePathWithLine}} ',
 };
 
 enum LogLevel {
@@ -50,7 +50,7 @@ class Logger<T = undefined> extends TSLog<T> {
 export default function logger<T = undefined>(name = 'LOGGER', ...args: string[]): Logger<T> {
     return autoBind(
         new Logger({
-            name: (args.reduce((n, s) => n + ' ' + s, `[\x1b[0m\x1b[1m${name}\x1b[0m`) + ']').padEnd(
+            name: (args.reduce((n, s) => n + ' ' + s, `\x1b[0m[\x1b[1m${name}\x1b[0m`) + ']').padEnd(
                 +(process.env.LOGGER_MIN_PAD ?? 0),
                 ' '
             ),
