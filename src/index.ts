@@ -1,52 +1,63 @@
 import autoBind from './autobind';
-import { Logger, TLogLevelColor, TLogLevelName, ISettingsParam } from 'tslog';
+import { Logger as TSLog, ISettingsParam } from 'tslog';
+import * as process from 'process';
 
-const logLevels: TLogLevelName[] = ['silly', 'trace', 'debug', 'info', 'warn', 'error', 'fatal'];
-
-const logLevelsColors: TLogLevelColor = {
-    0: 'cyan', // Silly
-    1: 'white', // Trace
-    2: 'green', // Debug
-    3: 'blue', // Info
-    4: 'yellow', // Warn
-    5: 'red', // Error
-    6: 'magenta', // Fatal
+const configs: ISettingsParam<undefined> = {
+    type: 'pretty',
+    prettyLogStyles: {
+        dateIsoStr: ['blackBright'],
+        filePathWithLine: ['blackBright', 'underline'],
+        logLevelName: {
+            '*': ['bold', 'black', 'bgWhiteBright', 'dim'],
+            SILLY: ['bold', 'white'],
+            TRACE: ['bold', 'whiteBright'],
+            DEBUG: ['bold', 'green'],
+            INFO: ['bold', 'blue'],
+            WARN: ['bold', 'yellow'],
+            ERROR: ['bold', 'red'],
+            FATAL: ['bold', 'magentaBright'],
+        },
+        name: ['white', 'bold'],
+        nameWithDelimiterPrefix: ['white', 'bold'],
+        nameWithDelimiterSuffix: ['white', 'bold'],
+        errorName: ['bold', 'bgRedBright', 'whiteBright'],
+        fileName: ['yellow'],
+    },
+    prettyLogTimeZone: 'local',
+    prettyLogTemplate: '{{dateIsoStr}}\t{{logLevelName}}\t[{{filePathWithLine}}\x1b[39m {{name}} ]\t',
 };
 
-let configs: ISettingsParam = {
-    displayFunctionName: false,
-    exposeErrorCodeFrame: false,
-    delimiter: '\t',
-    dateTimeTimezone: 'Asia/Kuala_Lumpur',
-    prettyInspectOptions: {
-        colors: true,
-        compact: false,
-        depth: null,
-    },
-    jsonInspectOptions: {
-        colors: true,
-        compact: false,
-        depth: null,
-    },
-    logLevelsColors,
-};
-
-export type { Logger, TLogLevelName as LogLevel };
-
-export default function logger(name: string, ...args: string[]): Logger {
-    const colorizePrettyLogs = process.env.LOGGER_COLOR?.toLowerCase() !== 'false'
-    const logLevel = process.env.LOGGER_MIN_LEVEL?.toLowerCase() as TLogLevelName | undefined;
-    const minLevel: TLogLevelName = logLevel && logLevels.includes(logLevel) ? logLevel : 'info';
-
-    return autoBind(
-        new Logger({
-            name: colorizePrettyLogs ? `\x1b[0m\x1b[1m${name}\x1b[0m${args.reduce((n, s) => n + ' ' + s, '')}\x1b[90m` : `${name}${args.reduce((n, s) => n + ' ' + s, '')}`,
-            displayFilePath: process.env.LOGGER_DISPLAY_FILE_PATH?.toLowerCase() === 'true' ? 'displayAll' : 'hidden',
-            colorizePrettyLogs,
-            minLevel,
-            ...configs,
-        })
-    );
+enum LogLevel {
+    silly,
+    trace,
+    debug,
+    info,
+    warn,
+    error,
+    fatal,
 }
 
-module.exports = logger;
+class Logger<T> extends TSLog<T> {
+    constructor(settings?: ISettingsParam<T>) {
+        super(settings);
+    }
+
+    setLogLevel(level: keyof typeof LogLevel | (typeof LogLevel)[keyof typeof LogLevel]) {
+        this.settings.minLevel = +(LogLevel[level] ?? level);
+        return this;
+    }
+}
+
+export default function logger(name: string, ...args: string[]): Logger<undefined> {
+    return autoBind(
+        new Logger({
+            name: `\x1b[0m\x1b[1m${name}\x1b[0m${[args].reduce((n, s) => n + ' ' + s, '')}\x1b[90m`,
+            hideLogPositionForProduction: ['true', '1'].includes(
+                <string>process.env.LOGGER_DISPLAY_FILE_PATH?.toLowerCase()
+            ),
+            ...configs,
+        })
+    ).setLogLevel(process.env.LOGGER_MIN_LEVEL?.toLowerCase() ?? 'info');
+}
+
+export type { Logger, LogLevel };
