@@ -23,7 +23,7 @@ const configs: ISettingsParam<undefined> = {
         fileName: ['yellow'],
     },
     prettyLogTimeZone: 'local',
-    prettyLogTemplate: '{{dateIsoStr}}\t{{logLevelName}}\t[{{name}}]\t{{filePathWithLine}}\t',
+    prettyLogTemplate: '{{dateIsoStr}}\t{{logLevelName}}\t[{{name}}]\t{{filePathWithLine}} ',
 };
 
 enum LogLevel {
@@ -51,7 +51,7 @@ export default function logger<T = undefined>(name = 'LOGGER', ...args: string[]
     return autoBind(
         new Logger({
             name: args.reduce((n, s) => n + ' ' + s, `\x1b[0m\x1b[1m${name}\x1b[0m`),
-            hideLogPositionForProduction: ['true', '1'].includes(
+            hideLogPositionForProduction: !['true', '1'].includes(
                 <string>process.env.LOGGER_DISPLAY_FILE_PATH?.toLowerCase()
             ),
             ...configs,
