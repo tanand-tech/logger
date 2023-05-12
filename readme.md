@@ -1,5 +1,5 @@
 # @tanand-tech/logger 
-![Version](https://img.shields.io/badge/version-2.0.3-blue.svg?cacheSeconds=2592000)
+![Version](https://img.shields.io/badge/version-2.0.4-blue.svg?cacheSeconds=2592000)
 [![Documentation](https://img.shields.io/badge/documentation-yes-brightgreen.svg)](https://github.com/tanand-tech/logger#readme)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/tanand-tech/logger/graphs/commit-activity)
 
@@ -27,6 +27,20 @@ set LOGGER_DISPLAY_FILE_PATH=true npm run start
 // Cross-env
 cross-env LOGGER_DISPLAY_FILE_PATH=true npm run start
 ```
+
+### Enable minimum name padding
+
+```shell
+// Unix
+LOGGER_MIN_PAD=16 npm run start
+
+// Windows
+set LOGGER_MIN_PAD=16 npm run start
+
+// Cross-env
+cross-env LOGGER_MIN_PAD=16 npm run start
+```
+
 
 ### Configure log levels
 
