@@ -1,6 +1,5 @@
 import autoBind from './autobind';
 import { Logger as TSLog, ISettingsParam } from 'tslog';
-import * as process from 'process';
 
 const configs: ISettingsParam<undefined> = {
     type: 'pretty',
@@ -24,7 +23,7 @@ const configs: ISettingsParam<undefined> = {
         fileName: ['yellow'],
     },
     prettyLogTimeZone: 'local',
-    prettyLogTemplate: '{{dateIsoStr}}\t{{logLevelName}}\t[{{filePathWithLine}}\x1b[39m {{name}} ]\t',
+    prettyLogTemplate: '{{dateIsoStr}}\t{{logLevelName}}\t[{{name}}]\t{{filePathWithLine}}\t',
 };
 
 enum LogLevel {
@@ -48,10 +47,10 @@ class Logger<T> extends TSLog<T> {
     }
 }
 
-export default function logger(name: string, ...args: string[]): Logger<undefined> {
+export default function logger(name = 'LOGGER', ...args: string[]): Logger<undefined> {
     return autoBind(
         new Logger({
-            name: `\x1b[0m\x1b[1m${name}\x1b[0m${[args].reduce((n, s) => n + ' ' + s, '')}\x1b[90m`,
+            name: args.reduce((n, s) => n + ' ' + s, `\x1b[0m\x1b[1m${name}\x1b[0m`),
             hideLogPositionForProduction: ['true', '1'].includes(
                 <string>process.env.LOGGER_DISPLAY_FILE_PATH?.toLowerCase()
             ),
@@ -59,5 +58,7 @@ export default function logger(name: string, ...args: string[]): Logger<undefine
         })
     ).setLogLevel(process.env.LOGGER_MIN_LEVEL?.toLowerCase() ?? 'info');
 }
+
+module.exports = logger;
 
 export type { Logger, LogLevel };
