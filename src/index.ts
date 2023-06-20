@@ -1,5 +1,6 @@
-import autoBind from './autobind';
+import { autoBind, transportFormatted, prettyFormatLogObj } from './util';
 import { Logger as TSLog, ISettingsParam } from 'tslog';
+import { appendFileSync } from 'fs';
 
 const configs: ISettingsParam<undefined> = {
     type: 'pretty',
@@ -43,6 +44,48 @@ class Logger<T = undefined> extends TSLog<T> {
 
     setLogLevel(level: keyof typeof LogLevel | (typeof LogLevel)[keyof typeof LogLevel]) {
         this.settings.minLevel = +(LogLevel[level] ?? level);
+        return this;
+    }
+
+    // subLogger(name: string) {
+    //     name = ' ' + name;
+    //
+    //     const log = super.getSubLogger({ ...this.settings, name });
+    //     // @ts-ignore
+    //     log.setLogLevel = function (level: keyof typeof LogLevel | (typeof LogLevel)[keyof typeof LogLevel]) {
+    //         log.settings.minLevel = +(LogLevel[level] ?? level);
+    //         return log;
+    //     };
+    //
+    //     return log as Logger<T>;
+    // }
+
+    attachPrettyTransport(transport: (line: string) => any) {
+        this.attachTransport((logObject) => {
+            const { [this.settings.metaProperty]: _meta, ...args } = logObject;
+            // @ts-ignore
+            const logMetaMarkup = this._prettyFormatLogObjMeta(_meta);
+
+            const logArgsAndErrorsMarkup = prettyFormatLogObj(
+                [
+                    ...this.settings.prefix,
+                    ...Object.values(args),
+                    // ...Object.entries(args)
+                    //     .sort((a, b) => +a[0] - +b[0])
+                    //     .map((v) => v[1]),
+                ],
+                this.settings
+            );
+
+            transport(
+                transportFormatted(
+                    logMetaMarkup,
+                    logArgsAndErrorsMarkup.args,
+                    logArgsAndErrorsMarkup.errors,
+                    this.settings
+                )
+            );
+        });
         return this;
     }
 }
