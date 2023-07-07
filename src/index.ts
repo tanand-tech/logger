@@ -27,7 +27,7 @@ const configs: ISettingsParam<undefined> = {
     prettyLogTemplate: '{{dateIsoStr}}\t{{logLevelName}}\t{{name}} {{filePathWithLine}} ',
 };
 
-enum LogLevel {
+enum LogOption {
     silly,
     trace,
     debug,
@@ -37,13 +37,15 @@ enum LogLevel {
     fatal,
 }
 
-class Logger<T = undefined> extends TSLog<T> {
+export type LogLevel = keyof typeof LogOption | (typeof LogOption)[keyof typeof LogOption];
+
+export class Logger<T = undefined> extends TSLog<T> {
     constructor(settings?: ISettingsParam<T>) {
         super(settings);
     }
 
-    setLogLevel(level: keyof typeof LogLevel | (typeof LogLevel)[keyof typeof LogLevel]) {
-        this.settings.minLevel = +(LogLevel[level] ?? level);
+    setLogLevel(level: LogLevel) {
+        this.settings.minLevel = +(LogOption[level] ?? level);
         return this;
     }
 
@@ -106,5 +108,3 @@ export default function logger<T = undefined>(name = 'LOGGER', ...args: string[]
 }
 
 module.exports = logger;
-
-export type { Logger, LogLevel };
