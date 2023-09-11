@@ -17,6 +17,8 @@ npm install @tanand-tech/logger
 
 ### Set Log Level
 ```javascript
+const logger = require('@tanand-tech/logger');
+
 const log1 = logger('LOG');
 log.setLogLevel('info');
 
