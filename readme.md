@@ -15,6 +15,16 @@ tslog wrapper for tanand-tech internal usage
 npm install @tanand-tech/logger
 ```
 
+### Set Log Level
+```javascript
+const log1 = logger('LOG');
+log.setLogLevel('info');
+
+const log2 = logger('LOG').setLogLevel('info');
+
+const { info, error } = logger('LOG').setLogLevel('info');
+```
+
 ### Enable filepath
 
 ```shell
