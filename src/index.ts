@@ -1,6 +1,5 @@
-import { autoBind, transportFormatted, prettyFormatLogObj } from './util';
 import { Logger as TSLog, ISettingsParam } from 'tslog';
-import { appendFileSync } from 'fs';
+import { autoBind, transportFormatted, prettyFormatLogObj } from './util';
 
 const configs: ISettingsParam<undefined> = {
     type: 'pretty',
@@ -106,5 +105,3 @@ export default function logger<T = undefined>(name = 'LOGGER', ...args: string[]
         })
     ).setLogLevel(process.env.LOGGER_MIN_LEVEL?.toLowerCase() ?? 'info');
 }
-
-module.exports = logger;
