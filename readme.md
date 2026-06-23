@@ -40,6 +40,19 @@ set LOGGER_DISPLAY_FILE_PATH=true npm run start
 cross-env LOGGER_DISPLAY_FILE_PATH=true npm run start
 ```
 
+### Disable Pretty logs
+
+```shell
+// Unix
+LOGGER_DISABLE_STYLES=true npm run start
+
+// Windows
+set LOGGER_DISABLE_STYLES=true npm run start
+
+// Cross-env
+cross-env LOGGER_DISABLE_STYLES=true npm run start
+```
+
 ### Enable minimum name padding
 
 ```shell

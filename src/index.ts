@@ -1,5 +1,5 @@
-import { Logger as TSLog, ISettingsParam } from 'tslog';
-import { autoBind, transportFormatted, prettyFormatLogObj } from './util';
+import {Logger as TSLog, ISettingsParam} from 'tslog';
+import {autoBind, transportFormatted, prettyFormatLogObj} from './util';
 
 const configs: ISettingsParam<undefined> = {
     type: 'pretty',
@@ -63,7 +63,7 @@ export class Logger<T = undefined> extends TSLog<T> {
 
     attachPrettyTransport(transport: (line: string) => any) {
         this.attachTransport((logObject) => {
-            const { [this.settings.metaProperty]: _meta, ...args } = logObject;
+            const {[this.settings.metaProperty]: _meta, ...args} = logObject;
             // @ts-ignore
             const logMetaMarkup = this._prettyFormatLogObjMeta(_meta);
 
@@ -100,6 +100,9 @@ export default function logger<T = undefined>(name = 'LOGGER', ...args: string[]
             ),
             hideLogPositionForProduction: !['true', '1'].includes(
                 <string>process.env.LOGGER_DISPLAY_FILE_PATH?.toLowerCase()
+            ),
+            stylePrettyLogs: !['true', '1'].includes(
+                <string>process.env.LOGGER_DISABLE_STYLES?.toLowerCase()
             ),
             ...configs,
         })
