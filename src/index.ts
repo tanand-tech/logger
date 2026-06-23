@@ -23,7 +23,7 @@ const configs: ISettingsParam<undefined> = {
         fileName: ['yellow'],
     },
     prettyLogTimeZone: 'local',
-    prettyLogTemplate: '{{dateIsoStr}}\t{{logLevelName}}\t{{name}} {{filePathWithLine}} ',
+    // prettyLogTemplate: '{{dateIsoStr}}\t{{logLevelName}}\t{{name}} {{filePathWithLine}} ',
 };
 
 enum LogOption {
@@ -92,18 +92,28 @@ export class Logger<T = undefined> extends TSLog<T> {
 }
 
 export default function logger<T = undefined>(name = 'LOGGER', ...args: string[]): Logger<T> {
+    const hideLogs = !['true', '1'].includes(
+        <string>process.env.LOGGER_DISPLAY_FILE_PATH?.toLowerCase()
+    )
+    const pretty = !['true', '1'].includes(
+        <string>process.env.LOGGER_DISABLE_STYLES?.toLowerCase()
+    );
+    const delimiter = <string>process.env.LOGGER_DELIMETER || '\t';
+    const template =
+        `{{dateIsoStr}}${delimiter}{{logLevelName}}${delimiter}{{name}} {{filePathWithLine}} `;
+
     return autoBind(
         new Logger({
-            name: (args.reduce((n, s) => n + ' ' + s, `\x1b[0m[\x1b[1m${name}\x1b[0m`) + ']').padEnd(
+            name: pretty ? (args.reduce((n, s) => n + ' ' + s, `\x1b[0m[\x1b[1m${name}\x1b[0m`) + ']').padEnd(
+                +(process.env.LOGGER_MIN_PAD ?? 0) + 14,
+                ' '
+            ) : (args.reduce((n, s) => n + ' ' + s, `[${name}`) + ']').padEnd(
                 +(process.env.LOGGER_MIN_PAD ?? 0) + 14,
                 ' '
             ),
-            hideLogPositionForProduction: !['true', '1'].includes(
-                <string>process.env.LOGGER_DISPLAY_FILE_PATH?.toLowerCase()
-            ),
-            stylePrettyLogs: !['true', '1'].includes(
-                <string>process.env.LOGGER_DISABLE_STYLES?.toLowerCase()
-            ),
+            hideLogPositionForProduction: hideLogs,
+            stylePrettyLogs: pretty,
+            prettyLogTemplate: template,
             ...configs,
         })
     ).setLogLevel(process.env.LOGGER_MIN_LEVEL?.toLowerCase() ?? 'info');
