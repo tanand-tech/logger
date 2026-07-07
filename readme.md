@@ -57,13 +57,13 @@ cross-env LOGGER_DELIMETER=\t npm run start
 
 ```shell
 // Unix
-LOGGER_DELIMETER=true npm run start
+LOGGER_DISABLE_STYLES=true npm run start
 
 // Windows
-set LOGGER_DELIMETER=true npm run start
+set LOGGER_DISABLE_STYLES=true npm run start
 
 // Cross-env
-cross-env LOGGER_DELIMETER=true npm run start
+cross-env LOGGER_DISABLE_STYLES=true npm run start
 ```
 
 ### Enable minimum name padding
