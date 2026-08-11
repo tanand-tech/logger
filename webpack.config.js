@@ -2,26 +2,15 @@ const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 
-module.exports = {
+const base = {
     mode: 'production',
     target: 'node',
     devtool: 'inline-source-map',
     entry: './src/index.ts',
-    externals: [nodeExternals()],
-    externalsPresets: { node: true },
+    externalsPresets: {node: true},
     output: {
-        clean: true,
-        filename: 'index.js',
+
         path: path.resolve(__dirname, 'dist'),
-        library: { name: 'logger', type: 'umd' },
-    },
-    module: {
-        rules: [
-            {
-                use: 'ts-loader',
-                exclude: /node_modules/,
-            },
-        ],
     },
     optimization: {
         minimize: true,
@@ -32,3 +21,57 @@ module.exports = {
         poll: 1000,
     },
 };
+
+const cjs = {
+    ...base,
+    name: 'cjs',
+    externals: [nodeExternals()],
+    output: {
+        ...base.output,
+        filename: 'index.js',
+        library: {name: 'logger', type: 'umd'},
+    },
+    module: {
+        rules: [
+            {
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
+        ],
+    },
+};
+
+const esm = {
+    ...base,
+    name: 'esm',
+    externals: [nodeExternals({importType: 'module'})],
+    experiments: {outputModule: true},
+    output: {
+        ...base.output,
+        filename: 'index.mjs',
+        module: true,
+        chunkFormat: 'module',
+        library: {type: 'module'},
+    },
+    module: {
+        rules: [
+            {
+                use: {
+                    loader: 'ts-loader',
+                    options: {
+                        instance: 'esm',
+                        compilerOptions: {
+                            module: 'esnext',
+                            moduleResolution: 'node',
+                            declaration: false,
+                            declarationMap: false,
+                        },
+                    },
+                },
+                exclude: /node_modules/,
+            },
+        ],
+    },
+};
+
+module.exports = [cjs, esm];
